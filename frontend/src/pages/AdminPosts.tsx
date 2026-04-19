@@ -74,6 +74,18 @@ export default function AdminPosts() {
 
           <div className="flex gap-3">
             <Link
+              to="/admin/categories"
+              className="px-5 py-3 border border-slate-300 text-xs font-black uppercase tracking-widest text-slate-700"
+            >
+              分类管理
+            </Link>
+            <Link
+              to="/admin/tags"
+              className="px-5 py-3 border border-slate-300 text-xs font-black uppercase tracking-widest text-slate-700"
+            >
+              标签管理
+            </Link>
+            <Link
               to="/admin/posts/new"
               className="px-5 py-3 bg-slate-900 text-white text-xs font-black uppercase tracking-widest"
             >
