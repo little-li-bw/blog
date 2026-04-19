@@ -214,6 +214,42 @@ class PostServiceTest {
         verify(tagMapper, never()).findByPostId(any());
     }
 
+    @Test
+    @DisplayName("后台文章详情 - 返回可编辑内容")
+    void testGetAdminPostDetail_ReturnsEditableDetail() {
+        Post post = buildPost();
+        when(postMapper.findById(1L)).thenReturn(post);
+        when(categoryMapper.findById(1L)).thenReturn(buildCategory());
+        when(tagMapper.findByPostId(1L)).thenReturn(List.of(buildTag(1L, "Java"), buildTag(2L, "Spring")));
+
+        PostDetailVO result = postService.getAdminPostDetail(1L);
+
+        assertThat(result.getId()).isEqualTo(1L);
+        assertThat(result.getContentMd()).isEqualTo("# Title");
+        assertThat(result.getTagIds()).containsExactly(1L, 2L);
+        assertThat(result.getTags()).containsExactly("Java", "Spring");
+    }
+
+    @Test
+    @DisplayName("更新文章 - 成功")
+    void testUpdatePost_Success() {
+        AdminPostSaveRequest request = buildSaveRequest();
+        when(postMapper.findById(1L)).thenReturn(buildPost());
+        when(categoryMapper.findById(1L)).thenReturn(buildCategory());
+        when(tagMapper.findByIds(List.of(1L, 2L))).thenReturn(List.of(buildTag(1L, "Java"), buildTag(2L, "Spring")));
+        when(tagMapper.findByPostId(1L)).thenReturn(List.of(buildTag(1L, "Java"), buildTag(2L, "Spring")));
+        when(postRenderService.render(request.getContentMd())).thenReturn("<h1>Updated</h1>");
+
+        PostDetailVO result = postService.updatePost(1L, request);
+
+        assertThat(result.getId()).isEqualTo(1L);
+        assertThat(result.getTitle()).isEqualTo("My First Post");
+        assertThat(result.getContentMd()).isEqualTo("# Title");
+        assertThat(result.getTags()).containsExactly("Java", "Spring");
+        verify(postMapper).updateById(any(Post.class));
+        verify(postTagMapper).replacePostTags(1L, List.of(1L, 2L));
+    }
+
     private AdminPostSaveRequest buildSaveRequest() {
         AdminPostSaveRequest request = new AdminPostSaveRequest();
         request.setTitle("My First Post");

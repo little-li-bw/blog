@@ -8,11 +8,13 @@ public class PostDetailVO {
     private Long id;
     private String title;
     private String summary;
+    private String contentMd;
     private String contentHtml;
     private String status;
     private Long categoryId;
     private String categoryName;
     private List<String> tags;
+    private List<Long> tagIds;
     private Long viewCount;
     private LocalDateTime publishTime;
     private PostPrevNextVO previousPost;
@@ -44,6 +46,14 @@ public class PostDetailVO {
 
     public String getContentHtml() {
         return contentHtml;
+    }
+
+    public String getContentMd() {
+        return contentMd;
+    }
+
+    public void setContentMd(String contentMd) {
+        this.contentMd = contentMd;
     }
 
     public void setContentHtml(String contentHtml) {
@@ -80,6 +90,14 @@ public class PostDetailVO {
 
     public void setTags(List<String> tags) {
         this.tags = tags;
+    }
+
+    public List<Long> getTagIds() {
+        return tagIds;
+    }
+
+    public void setTagIds(List<Long> tagIds) {
+        this.tagIds = tagIds;
     }
 
     public Long getViewCount() {

@@ -140,6 +140,12 @@ export default function AdminPosts() {
                   </div>
                   <div className="text-sm text-slate-600">{formatDate(post.publishTime)}</div>
                   <div className="flex gap-2">
+                    <Link
+                      to={`/admin/posts/${post.id}/edit`}
+                      className="px-3 py-2 border border-slate-300 text-[10px] font-black tracking-widest text-slate-700"
+                    >
+                      编辑
+                    </Link>
                     {post.status !== 'PUBLISHED' ? (
                       <button
                         onClick={() => handleStatusChange(post.id, 'PUBLISHED')}

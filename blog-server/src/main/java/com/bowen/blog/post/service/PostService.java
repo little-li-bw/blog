@@ -54,13 +54,41 @@ public class PostService {
         post.setViewCount(0L);
         postMapper.insert(post);
         postTagMapper.replacePostTags(post.getId(), normalizeTagIds(request.getTagIds()));
-        return toDetailVO(post);
+        return toDetailVO(post, true);
     }
 
     public List<PostListItemVO> listAdminPosts() {
         return postMapper.findAllForAdmin().stream()
                 .map(this::toListItemVO)
                 .toList();
+    }
+
+    public PostDetailVO getAdminPostDetail(Long id) {
+        Post post = postMapper.findById(id);
+        if (post == null) {
+            throw new NoSuchElementException("Post not found");
+        }
+        return toDetailVO(post, true);
+    }
+
+    public PostDetailVO updatePost(Long id, AdminPostSaveRequest request) {
+        validateSaveRequest(request);
+        ensureCategoryExists(request.getCategoryId());
+        validateTags(request.getTagIds());
+
+        Post post = postMapper.findById(id);
+        if (post == null) {
+            throw new NoSuchElementException("Post not found");
+        }
+
+        post.setTitle(request.getTitle().trim());
+        post.setSummary(request.getSummary().trim());
+        post.setContentMd(request.getContentMd().trim());
+        post.setContentHtml(postRenderService.render(request.getContentMd()));
+        post.setCategoryId(request.getCategoryId());
+        postMapper.updateById(post);
+        postTagMapper.replacePostTags(post.getId(), normalizeTagIds(request.getTagIds()));
+        return toDetailVO(post, true);
     }
 
     public PostDetailVO updateStatus(Long id, String status) {
@@ -75,7 +103,7 @@ public class PostService {
             post.setPublishTime(LocalDateTime.now());
         }
         postMapper.updateById(post);
-        return toDetailVO(post);
+        return toDetailVO(post, true);
     }
 
     public List<PostListItemVO> listPublishedPosts(String keyword, Long categoryId, Integer pageNum, Integer pageSize) {
@@ -94,7 +122,7 @@ public class PostService {
             throw new NoSuchElementException("Post not found");
         }
 
-        PostDetailVO detail = toDetailVO(post);
+        PostDetailVO detail = toDetailVO(post, false);
         detail.setPreviousPost(toPrevNextVO(postMapper.findPreviousPublished(post.getPublishTime(), id)));
         detail.setNextPost(toPrevNextVO(postMapper.findNextPublished(post.getPublishTime(), id)));
         return detail;
@@ -165,7 +193,8 @@ public class PostService {
         return item;
     }
 
-    private PostDetailVO toDetailVO(Post post) {
+    private PostDetailVO toDetailVO(Post post, boolean includeEditorFields) {
+        List<Tag> tags = tagMapper.findByPostId(post.getId());
         PostDetailVO detail = new PostDetailVO();
         detail.setId(post.getId());
         detail.setTitle(post.getTitle());
@@ -174,7 +203,11 @@ public class PostService {
         detail.setStatus(post.getStatus());
         detail.setCategoryId(post.getCategoryId());
         detail.setCategoryName(resolveCategoryName(post.getCategoryId()));
-        detail.setTags(resolveTagNames(post.getId()));
+        detail.setTags(tags.stream().map(Tag::getName).toList());
+        if (includeEditorFields) {
+            detail.setContentMd(post.getContentMd());
+            detail.setTagIds(tags.stream().map(Tag::getId).toList());
+        }
         detail.setViewCount(post.getViewCount());
         detail.setPublishTime(post.getPublishTime());
         return detail;

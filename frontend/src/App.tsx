@@ -3,6 +3,7 @@ import Layout from './components/Layout';
 import AdminCategories from './pages/AdminCategories';
 import AdminLogin from './pages/AdminLogin';
 import AdminPostCreate from './pages/AdminPostCreate';
+import AdminPostEdit from './pages/AdminPostEdit';
 import AdminPosts from './pages/AdminPosts';
 import AdminTags from './pages/AdminTags';
 import Home from './pages/Home';
@@ -31,6 +32,7 @@ export default function App() {
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/posts" element={<AdminPosts />} />
           <Route path="/admin/posts/new" element={<AdminPostCreate />} />
+          <Route path="/admin/posts/:id/edit" element={<AdminPostEdit />} />
           <Route path="/admin/categories" element={<AdminCategories />} />
           <Route path="/admin/tags" element={<AdminTags />} />
         </Routes>

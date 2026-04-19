@@ -30,6 +30,17 @@ export function createAdminPost(token: string, payload: AdminPostSavePayload): P
   });
 }
 
+export function getAdminPostDetail(token: string, id: number): Promise<PostDetail> {
+  return adminApiRequest<PostDetail>(`/api/admin/posts/${id}`, token);
+}
+
+export function updateAdminPost(token: string, id: number, payload: AdminPostSavePayload): Promise<PostDetail> {
+  return adminApiRequest<PostDetail>(`/api/admin/posts/${id}`, token, {
+    method: 'PUT',
+    body: JSON.stringify(payload),
+  });
+}
+
 export function updateAdminPostStatus(token: string, id: number, status: string): Promise<PostDetail> {
   return adminApiRequest<PostDetail>(`/api/admin/posts/${id}/status`, token, {
     method: 'PUT',

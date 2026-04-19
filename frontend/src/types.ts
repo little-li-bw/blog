@@ -61,11 +61,13 @@ export interface PostDetail {
   id: number;
   title: string;
   summary: string;
+  contentMd?: string;
   contentHtml: string;
   status: string;
   categoryId: number;
   categoryName: string;
   tags: string[];
+  tagIds?: number[];
   viewCount: number;
   publishTime?: string;
   previousPost: PostPrevNext | null;

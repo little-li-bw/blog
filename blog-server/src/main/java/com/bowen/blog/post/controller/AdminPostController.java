@@ -31,9 +31,19 @@ public class AdminPostController {
         return ApiResponse.success(postService.listAdminPosts());
     }
 
+    @GetMapping("/{id}")
+    public ApiResponse<PostDetailVO> detail(@PathVariable Long id) {
+        return ApiResponse.success(postService.getAdminPostDetail(id));
+    }
+
     @PostMapping
     public ApiResponse<PostDetailVO> create(@RequestBody AdminPostSaveRequest request) {
         return ApiResponse.success(postService.createPost(request));
+    }
+
+    @PutMapping("/{id}")
+    public ApiResponse<PostDetailVO> update(@PathVariable Long id, @RequestBody AdminPostSaveRequest request) {
+        return ApiResponse.success(postService.updatePost(id, request));
     }
 
     @PutMapping("/{id}/status")

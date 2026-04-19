@@ -66,6 +66,46 @@ class AdminPostControllerTest {
     }
 
     @Test
+    void detailEndpointReturnsEditablePost() throws Exception {
+        PostService postService = mock(PostService.class);
+        when(postService.getAdminPostDetail(1L)).thenReturn(buildDetail());
+
+        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(new AdminPostController(postService))
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
+
+        mockMvc.perform(get("/api/admin/posts/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.id").value(1))
+                .andExpect(jsonPath("$.data.contentMd").value("# Title"));
+    }
+
+    @Test
+    void updateEndpointReturnsSavedPost() throws Exception {
+        PostService postService = mock(PostService.class);
+        when(postService.updatePost(eq(1L), any(AdminPostSaveRequest.class))).thenReturn(buildDetail());
+
+        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(new AdminPostController(postService))
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
+
+        mockMvc.perform(put("/api/admin/posts/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "title": "My First Post",
+                                  "summary": "Intro summary",
+                                  "contentMd": "# Title",
+                                  "categoryId": 1,
+                                  "tagIds": [1, 2]
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.id").value(1))
+                .andExpect(jsonPath("$.data.title").value("My First Post"));
+    }
+
+    @Test
     void statusEndpointReturnsUpdatedPost() throws Exception {
         PostService postService = mock(PostService.class);
         when(postService.updateStatus(eq(1L), eq("PUBLISHED"))).thenReturn(buildDetail());
@@ -105,8 +145,11 @@ class AdminPostControllerTest {
         detail.setSummary("Intro summary");
         detail.setStatus("PUBLISHED");
         detail.setContentHtml("<h1>Title</h1>");
+        detail.setContentMd("# Title");
+        detail.setCategoryId(1L);
         detail.setCategoryName("Java");
         detail.setTags(List.of("Java", "Spring"));
+        detail.setTagIds(List.of(1L, 2L));
         return detail;
     }
 }
