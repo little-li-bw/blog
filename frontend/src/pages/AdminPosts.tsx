@@ -72,7 +72,7 @@ export default function AdminPosts() {
             </p>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
             <Link
               to="/admin/categories"
               className="px-5 py-3 border border-slate-300 text-xs font-black uppercase tracking-widest text-slate-700"
@@ -84,6 +84,12 @@ export default function AdminPosts() {
               className="px-5 py-3 border border-slate-300 text-xs font-black uppercase tracking-widest text-slate-700"
             >
               标签管理
+            </Link>
+            <Link
+              to="/admin/site-config"
+              className="px-5 py-3 border border-slate-300 text-xs font-black uppercase tracking-widest text-slate-700"
+            >
+              站点配置
             </Link>
             <Link
               to="/admin/posts/new"

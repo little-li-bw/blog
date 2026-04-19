@@ -54,6 +54,7 @@ describe('AdminPosts page', () => {
     });
 
     expect(screen.getByText('PUBLISHED')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: '站点配置' })).toHaveAttribute('href', '/admin/site-config');
   });
 
   it('publishes draft post from list', async () => {
