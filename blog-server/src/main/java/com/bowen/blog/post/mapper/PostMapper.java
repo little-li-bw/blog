@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.Delete;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -34,6 +35,12 @@ public interface PostMapper {
             WHERE id = #{id}
             """)
     int updateById(Post post);
+
+    @Delete("""
+            DELETE FROM post
+            WHERE id = #{id}
+            """)
+    int deleteById(Long id);
 
     @Select("""
             SELECT id, title, summary, content_md, content_html, category_id, status, view_count, publish_time, create_time, update_time

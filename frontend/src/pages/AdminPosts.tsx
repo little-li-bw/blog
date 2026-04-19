@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { adminApiRequest } from '../api/client';
-import { updateAdminPostStatus } from '../api/posts';
+import { deleteAdminPost, updateAdminPostStatus } from '../api/posts';
 import { clearAdminSession, getAdminSession, getAdminToken } from '../lib/auth';
 import { formatDate } from '../lib/format';
 import type { PostListItem } from '../types';
@@ -52,6 +52,21 @@ export default function AdminPosts() {
       );
     } catch (err) {
       setError(err instanceof Error ? err.message : '更新文章状态失败');
+    }
+  };
+
+  const handleDelete = async (postId: number) => {
+    const token = getAdminToken();
+    if (!token) {
+      navigate('/admin/login');
+      return;
+    }
+
+    try {
+      await deleteAdminPost(token, postId);
+      setPosts((current) => current.filter((post) => post.id !== postId));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '删除文章失败');
     }
   };
 
@@ -168,6 +183,12 @@ export default function AdminPosts() {
                         下线
                       </button>
                     ) : null}
+                    <button
+                      onClick={() => handleDelete(post.id)}
+                      className="px-3 py-2 border border-red-200 text-[10px] font-black tracking-widest text-red-600"
+                    >
+                      删除
+                    </button>
                   </div>
                 </div>
               ))

@@ -125,6 +125,27 @@ class PostServiceTest {
     }
 
     @Test
+    @DisplayName("删除文章 - 成功")
+    void testDeletePost_Success() {
+        when(postMapper.findById(1L)).thenReturn(buildPost());
+
+        postService.deletePost(1L);
+
+        verify(postTagMapper).deleteByPostId(1L);
+        verify(postMapper).deleteById(1L);
+    }
+
+    @Test
+    @DisplayName("删除文章 - 文章不存在时抛出异常")
+    void testDeletePost_WhenMissing_ThrowsException() {
+        when(postMapper.findById(99L)).thenReturn(null);
+
+        assertThatThrownBy(() -> postService.deletePost(99L))
+                .isInstanceOf(NoSuchElementException.class)
+                .hasMessage("Post not found");
+    }
+
+    @Test
     @DisplayName("后台文章列表 - 返回文章数据")
     void testListAdminPosts_ReturnsPosts() {
         Post post = buildPost();

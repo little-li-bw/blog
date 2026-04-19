@@ -131,4 +131,64 @@ describe('AdminPosts page', () => {
       expect(screen.getByText('PUBLISHED')).toBeInTheDocument();
     });
   });
+
+  it('deletes post from list', async () => {
+    vi.stubGlobal('fetch', vi.fn((input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input);
+
+      if (url === '/api/admin/posts') {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({
+            success: true,
+            message: 'Success',
+            data: [
+              {
+                id: 1,
+                title: 'Delete Me',
+                summary: 'Summary',
+                status: 'DRAFT',
+                categoryId: 1,
+                categoryName: 'Java',
+                tags: [],
+                viewCount: 0,
+                publishTime: null,
+              },
+            ],
+          }),
+        } as Response);
+      }
+
+      if (url === '/api/admin/posts/1' && init?.method === 'DELETE') {
+        const headers = new Headers(init?.headers);
+        expect(headers.get('Authorization')).toBe('Bearer jwt-token');
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({
+            success: true,
+            message: 'Deleted successfully',
+            data: null,
+          }),
+        } as Response);
+      }
+
+      throw new Error(`Unexpected request: ${url}`);
+    }));
+
+    render(
+      <MemoryRouter>
+        <AdminPosts />
+      </MemoryRouter>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Delete Me')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: '删除' }));
+
+    await waitFor(() => {
+      expect(screen.queryByText('Delete Me')).not.toBeInTheDocument();
+    });
+  });
 });

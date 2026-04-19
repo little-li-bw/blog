@@ -2,8 +2,18 @@ import * as React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createAdminPost } from '../api/posts';
 import { getCategories, getTags } from '../api/site';
+import { uploadAdminFile } from '../api/upload';
 import { getAdminToken } from '../lib/auth';
 import type { Category, TagOption } from '../types';
+
+function buildImageMarkdown(fileName: string, fileUrl: string): string {
+  const altText = fileName.replace(/\.[^.]+$/, '') || 'image';
+  return `![${altText}](${fileUrl})`;
+}
+
+function appendMarkdown(current: string, snippet: string): string {
+  return current.trim() ? `${current}\n\n${snippet}` : snippet;
+}
 
 export default function AdminPostCreate() {
   const navigate = useNavigate();
@@ -16,6 +26,7 @@ export default function AdminPostCreate() {
   const [selectedTagIds, setSelectedTagIds] = React.useState<number[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [saving, setSaving] = React.useState(false);
+  const [uploading, setUploading] = React.useState(false);
   const [error, setError] = React.useState('');
 
   React.useEffect(() => {
@@ -45,6 +56,28 @@ export default function AdminPostCreate() {
     setSelectedTagIds((current) =>
       current.includes(tagId) ? current.filter((item) => item !== tagId) : [...current, tagId],
     );
+  };
+
+  const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    const token = getAdminToken();
+    if (!file || !token) {
+      return;
+    }
+
+    setUploading(true);
+    setError('');
+
+    try {
+      const uploaded = await uploadAdminFile(token, file);
+      const snippet = buildImageMarkdown(uploaded.fileName, uploaded.fileUrl);
+      setContentMd((current) => appendMarkdown(current, snippet));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '上传图片失败');
+    } finally {
+      event.target.value = '';
+      setUploading(false);
+    }
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -155,10 +188,22 @@ export default function AdminPostCreate() {
             </div>
           </div>
 
-          <div className="space-y-2">
-            <label htmlFor="contentMd" className="block text-xs font-black uppercase tracking-widest text-slate-700">
-              Markdown 正文
-            </label>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between gap-4">
+              <label htmlFor="contentMd" className="block text-xs font-black uppercase tracking-widest text-slate-700">
+                Markdown 正文
+              </label>
+              <label className="inline-flex items-center gap-2 px-4 py-2 border border-slate-300 text-xs font-black uppercase tracking-widest text-slate-700 cursor-pointer">
+                <span>{uploading ? '上传中...' : '上传图片'}</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  aria-label="上传图片"
+                  className="sr-only"
+                  onChange={handleUpload}
+                />
+              </label>
+            </div>
             <textarea
               id="contentMd"
               value={contentMd}
@@ -173,7 +218,7 @@ export default function AdminPostCreate() {
           <div className="flex justify-end">
             <button
               type="submit"
-              disabled={saving}
+              disabled={saving || uploading}
               className="px-6 py-3 bg-slate-900 text-white text-xs font-black uppercase tracking-widest disabled:opacity-60"
             >
               {saving ? '保存中...' : '保存草稿'}

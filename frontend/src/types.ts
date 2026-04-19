@@ -40,6 +40,13 @@ export interface TagOption {
   name: string;
 }
 
+export interface UploadFileRecord {
+  id: number;
+  fileName: string;
+  filePath: string;
+  fileUrl: string;
+}
+
 export interface PostListItem {
   id: number;
   title: string;

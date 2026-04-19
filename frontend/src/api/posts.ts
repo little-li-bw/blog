@@ -41,6 +41,12 @@ export function updateAdminPost(token: string, id: number, payload: AdminPostSav
   });
 }
 
+export function deleteAdminPost(token: string, id: number): Promise<void> {
+  return adminApiRequest<void>(`/api/admin/posts/${id}`, token, {
+    method: 'DELETE',
+  });
+}
+
 export function updateAdminPostStatus(token: string, id: number, status: string): Promise<PostDetail> {
   return adminApiRequest<PostDetail>(`/api/admin/posts/${id}/status`, token, {
     method: 'PUT',

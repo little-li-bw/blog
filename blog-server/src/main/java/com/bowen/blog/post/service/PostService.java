@@ -106,6 +106,15 @@ public class PostService {
         return toDetailVO(post, true);
     }
 
+    public void deletePost(Long id) {
+        Post post = postMapper.findById(id);
+        if (post == null) {
+            throw new NoSuchElementException("Post not found");
+        }
+        postTagMapper.deleteByPostId(id);
+        postMapper.deleteById(id);
+    }
+
     public List<PostListItemVO> listPublishedPosts(String keyword, Long categoryId, Integer pageNum, Integer pageSize) {
         int normalizedPageNum = pageNum == null || pageNum < 1 ? 1 : pageNum;
         int normalizedPageSize = pageSize == null || pageSize < 1 ? 10 : pageSize;

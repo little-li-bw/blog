@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 import java.util.List;
 
@@ -44,6 +45,12 @@ public class AdminPostController {
     @PutMapping("/{id}")
     public ApiResponse<PostDetailVO> update(@PathVariable Long id, @RequestBody AdminPostSaveRequest request) {
         return ApiResponse.success(postService.updatePost(id, request));
+    }
+
+    @DeleteMapping("/{id}")
+    public ApiResponse<Void> delete(@PathVariable Long id) {
+        postService.deletePost(id);
+        return ApiResponse.success("Deleted successfully", null);
     }
 
     @PutMapping("/{id}/status")

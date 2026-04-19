@@ -47,6 +47,8 @@ describe('AdminPostCreate page', () => {
         const headers = new Headers(init?.headers);
         expect(headers.get('Authorization')).toBe('Bearer jwt-token');
         expect(init?.method).toBe('POST');
+        const payload = JSON.parse(String(init?.body));
+        expect(payload.contentMd).toContain('![diagram](https://cdn.example.com/diagram.png)');
 
         return Promise.resolve({
           ok: true,
@@ -62,10 +64,30 @@ describe('AdminPostCreate page', () => {
               categoryId: 1,
               categoryName: 'Java',
               tags: ['Spring Boot'],
+              tagIds: [1],
               viewCount: 0,
               publishTime: null,
               previousPost: null,
               nextPost: null,
+            },
+          }),
+        } as Response);
+      }
+
+      if (url === '/api/admin/upload') {
+        const headers = new Headers(init?.headers);
+        expect(headers.get('Authorization')).toBe('Bearer jwt-token');
+        expect(init?.method).toBe('POST');
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({
+            success: true,
+            message: 'Success',
+            data: {
+              id: 1,
+              fileName: 'diagram.png',
+              filePath: 'D:/java/blog/uploads/diagram.png',
+              fileUrl: 'https://cdn.example.com/diagram.png',
             },
           }),
         } as Response);
@@ -87,9 +109,15 @@ describe('AdminPostCreate page', () => {
       expect(screen.getByLabelText('文章标题')).toBeInTheDocument();
     });
 
+    const file = new File(['binary'], 'diagram.png', { type: 'image/png' });
+    fireEvent.change(screen.getByLabelText('上传图片'), { target: { files: [file] } });
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('Markdown 正文')).toHaveValue('![diagram](https://cdn.example.com/diagram.png)');
+    });
+
     fireEvent.change(screen.getByLabelText('文章标题'), { target: { value: 'Spring Boot Notes' } });
     fireEvent.change(screen.getByLabelText('文章摘要'), { target: { value: 'Summary' } });
-    fireEvent.change(screen.getByLabelText('Markdown 正文'), { target: { value: '# Title' } });
     fireEvent.change(screen.getByLabelText('分类'), { target: { value: '1' } });
     fireEvent.click(screen.getByLabelText('Spring Boot'));
     fireEvent.click(screen.getByRole('button', { name: '保存草稿' }));
