@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: blog-server
+
+blog:
+  security:
+    jwt-secret: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+    jwt-expiration-seconds: 86400

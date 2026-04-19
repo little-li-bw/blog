@@ -1,0 +1,58 @@
+package com.bowen.blog.tag.mapper;
+
+import com.bowen.blog.tag.entity.Tag;
+import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
+
+import java.util.List;
+
+@Mapper
+public interface TagMapper {
+
+    @Select("""
+            SELECT id, name, create_time, update_time
+            FROM tag
+            ORDER BY name ASC, id ASC
+            """)
+    List<Tag> findAllOrderByNameAscIdAsc();
+
+    @Select("""
+            SELECT id, name, create_time, update_time
+            FROM tag
+            WHERE id = #{id}
+            LIMIT 1
+            """)
+    Tag findById(Long id);
+
+    @Select("""
+            SELECT id, name, create_time, update_time
+            FROM tag
+            WHERE name = #{name}
+            LIMIT 1
+            """)
+    Tag findByName(String name);
+
+    @Insert("""
+            INSERT INTO tag (name)
+            VALUES (#{name})
+            """)
+    @Options(useGeneratedKeys = true, keyProperty = "id")
+    int insert(Tag tag);
+
+    @Update("""
+            UPDATE tag
+            SET name = #{name}
+            WHERE id = #{id}
+            """)
+    int updateById(Tag tag);
+
+    @Delete("""
+            DELETE FROM tag
+            WHERE id = #{id}
+            """)
+    int deleteById(Long id);
+}
