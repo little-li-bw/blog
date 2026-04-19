@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
@@ -55,4 +56,26 @@ public interface TagMapper {
             WHERE id = #{id}
             """)
     int deleteById(Long id);
+
+    @Select("""
+            <script>
+            SELECT id, name, create_time, update_time
+            FROM tag
+            WHERE id IN
+            <foreach collection="ids" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+            ORDER BY id ASC
+            </script>
+            """)
+    List<Tag> findByIds(@Param("ids") List<Long> ids);
+
+    @Select("""
+            SELECT t.id, t.name, t.create_time, t.update_time
+            FROM tag t
+            INNER JOIN post_tag pt ON pt.tag_id = t.id
+            WHERE pt.post_id = #{postId}
+            ORDER BY t.id ASC
+            """)
+    List<Tag> findByPostId(@Param("postId") Long postId);
 }

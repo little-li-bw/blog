@@ -1,0 +1,43 @@
+package com.bowen.blog.post.controller;
+
+import com.bowen.blog.common.ApiResponse;
+import com.bowen.blog.post.dto.AdminPostSaveRequest;
+import com.bowen.blog.post.dto.PostStatusUpdateRequest;
+import com.bowen.blog.post.service.PostService;
+import com.bowen.blog.post.vo.PostDetailVO;
+import com.bowen.blog.post.vo.PostListItemVO;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/admin/posts")
+public class AdminPostController {
+
+    private final PostService postService;
+
+    public AdminPostController(PostService postService) {
+        this.postService = postService;
+    }
+
+    @GetMapping
+    public ApiResponse<List<PostListItemVO>> list() {
+        return ApiResponse.success(postService.listAdminPosts());
+    }
+
+    @PostMapping
+    public ApiResponse<PostDetailVO> create(@RequestBody AdminPostSaveRequest request) {
+        return ApiResponse.success(postService.createPost(request));
+    }
+
+    @PutMapping("/{id}/status")
+    public ApiResponse<PostDetailVO> updateStatus(@PathVariable Long id, @RequestBody PostStatusUpdateRequest request) {
+        return ApiResponse.success(postService.updateStatus(id, request.getStatus()));
+    }
+}
