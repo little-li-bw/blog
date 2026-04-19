@@ -1,9 +1,10 @@
-import { BlogPost } from '../types';
-import { Calendar, Tag as TagIcon, ArrowRight } from 'lucide-react';
+import { Calendar, ArrowRight } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
+import type { PostListItem } from '../types';
+import { formatDate } from '../lib/format';
 
-export default function BlogCard({ post }: { post: BlogPost }) {
+export default function BlogCard({ post }: { post: PostListItem }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -14,10 +15,10 @@ export default function BlogCard({ post }: { post: BlogPost }) {
       <div className="flex flex-wrap items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-6">
         <span className="flex items-center gap-1.5 px-3 py-1 bg-slate-50 rounded-lg text-slate-900 border border-slate-100">
           <Calendar className="w-3 h-3" />
-          {post.date}
+          {formatDate(post.publishTime)}
         </span>
         <span className="flex items-center gap-1.5 px-3 py-1 bg-slate-50 rounded-lg border border-slate-100">
-          {post.category}
+          {post.categoryName}
         </span>
       </div>
 
@@ -25,13 +26,21 @@ export default function BlogCard({ post }: { post: BlogPost }) {
         <Link to={`/blog/${post.id}`}>{post.title}</Link>
       </h3>
 
-      <p className="text-slate-500 text-sm line-clamp-2 md:line-clamp-3 mb-8 leading-relaxed flex-grow">
+      <p className="text-slate-500 text-sm line-clamp-2 md:line-clamp-3 mb-6 leading-relaxed flex-grow">
         {post.summary}
       </p>
 
+      <div className="flex flex-wrap gap-2 mb-8">
+        {post.tags.map((tag) => (
+          <span key={tag} className="px-2 py-1 bg-slate-100 text-[10px] font-bold text-slate-600 rounded-md">
+            {tag}
+          </span>
+        ))}
+      </div>
+
       <div className="pt-8 border-t border-slate-100 flex items-center justify-between mt-auto">
         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-          {post.views} 次阅读 · {post.readTime}
+          {post.viewCount} 次阅读
         </span>
         <Link
           to={`/blog/${post.id}`}
