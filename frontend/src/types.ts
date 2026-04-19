@@ -4,6 +4,17 @@ export interface ApiResponse<T> {
   data: T;
 }
 
+export interface LoginPayload {
+  username: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  token: string;
+  username: string;
+  nickname: string;
+}
+
 export interface SiteConfig {
   siteName: string;
   heroTitle: string;
@@ -22,6 +33,11 @@ export interface Category {
   id: number;
   name: string;
   sort: number;
+}
+
+export interface TagOption {
+  id: number;
+  name: string;
 }
 
 export interface PostListItem {
@@ -54,4 +70,12 @@ export interface PostDetail {
   publishTime?: string;
   previousPost: PostPrevNext | null;
   nextPost: PostPrevNext | null;
+}
+
+export interface AdminPostSavePayload {
+  title: string;
+  summary: string;
+  contentMd: string;
+  categoryId: number;
+  tagIds: number[];
 }

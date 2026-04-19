@@ -12,3 +12,17 @@ export async function apiRequest<T>(path: string, init?: RequestInit): Promise<T
 
   return payload.data;
 }
+
+export async function adminApiRequest<T>(path: string, token: string, init?: RequestInit): Promise<T> {
+  const headers = new Headers(init?.headers);
+  headers.set('Authorization', `Bearer ${token}`);
+
+  if (init?.body && !headers.has('Content-Type')) {
+    headers.set('Content-Type', 'application/json');
+  }
+
+  return apiRequest<T>(path, {
+    ...init,
+    headers,
+  });
+}
