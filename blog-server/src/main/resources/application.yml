@@ -4,7 +4,7 @@ spring:
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/blog?useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=utf8}
     username: ${SPRING_DATASOURCE_USERNAME:root}
-    password: ${SPRING_DATASOURCE_PASSWORD:123456}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
   servlet:
     multipart:
@@ -13,7 +13,7 @@ spring:
 
 blog:
   security:
-    jwt-secret: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+    jwt-secret: ${BLOG_JWT_SECRET}
     jwt-expiration-seconds: 86400
   upload:
     storage-path: uploads
