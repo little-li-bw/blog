@@ -117,8 +117,8 @@ export default function BlogDetail() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-16 py-12">
-      <article className="lg:col-span-8 space-y-16">
+    <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-10 xl:gap-12 py-12">
+      <article className="lg:col-span-9 space-y-16 min-w-0">
         <div className="space-y-10 pb-12 border-b-2 border-slate-100">
           <button
             onClick={() => navigate(-1)}
@@ -198,9 +198,9 @@ export default function BlogDetail() {
         </div>
       </article>
 
-      <aside className="lg:col-span-4 space-y-12">
+      <aside className="lg:col-span-3 lg:justify-self-end space-y-12">
         <div className="sticky top-32 space-y-12">
-          <div className="bg-white border-l-[10px] border-slate-800 p-10 space-y-10">
+          <div className="bg-white border-l-[10px] border-slate-800 p-8 xl:p-9 space-y-8 w-full max-w-xs ml-auto">
             <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.2em] flex items-center gap-3 italic">
               / 目录导航
             </h3>

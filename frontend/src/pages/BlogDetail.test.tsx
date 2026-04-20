@@ -54,5 +54,12 @@ describe('BlogDetail page', () => {
     });
 
     expect(screen.getByText('Body')).toBeInTheDocument();
+
+    const article = screen.getByRole('article');
+    expect(article.className).toContain('lg:col-span-9');
+
+    const tocHeading = screen.getByText('/ 目录导航');
+    const tocPanel = tocHeading.closest('div');
+    expect(tocPanel?.className).toContain('max-w-xs');
   });
 });
