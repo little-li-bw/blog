@@ -2,7 +2,13 @@ spring:
   config:
     activate:
       on-profile: test
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
-      - com.baomidou.mybatisplus.autoconfigure.MybatisPlusAutoConfiguration
+  datasource:
+    url: jdbc:h2:mem:blog;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+blog:
+  upload:
+    storage-path: target/test-uploads
+    url-prefix: /uploads

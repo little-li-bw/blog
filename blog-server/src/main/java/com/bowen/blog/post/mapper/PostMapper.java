@@ -89,7 +89,7 @@ public interface PostMapper {
             SELECT id, title, summary, content_md, content_html, category_id, status, view_count, publish_time, create_time, update_time
             FROM post
             WHERE status = 'PUBLISHED'
-              AND publish_time &lt; #{publishTime}
+              AND publish_time < #{publishTime}
             ORDER BY publish_time DESC, id DESC
             LIMIT 1
             """)
@@ -99,7 +99,7 @@ public interface PostMapper {
             SELECT id, title, summary, content_md, content_html, category_id, status, view_count, publish_time, create_time, update_time
             FROM post
             WHERE status = 'PUBLISHED'
-              AND publish_time &gt; #{publishTime}
+              AND publish_time > #{publishTime}
             ORDER BY publish_time ASC, id ASC
             LIMIT 1
             """)
