@@ -101,7 +101,7 @@ blog/
 示例：
 
 ```text
-SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/blog?useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=utf8
+SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/blog?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai&characterEncoding=utf8
 SPRING_DATASOURCE_USERNAME=root
 SPRING_DATASOURCE_PASSWORD=your_local_mysql_password
 BLOG_JWT_SECRET=your_long_random_secret
@@ -185,7 +185,7 @@ MYSQL_ROOT_PASSWORD=change_me
 BLOG_JWT_SECRET=change_me_to_a_long_random_secret
 SPRING_DATASOURCE_USERNAME=root
 SPRING_DATASOURCE_PASSWORD=change_me
-SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/blog?useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=utf8
+SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/blog?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai&characterEncoding=utf8
 ```
 
 ### 校验配置
