@@ -13,18 +13,21 @@ describe('AdminLogin page', () => {
   });
 
   it('submits credentials and redirects to admin posts', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-      ok: true,
-      json: async () => ({
-        success: true,
-        message: 'Success',
-        data: {
-          token: 'jwt-token',
-          username: 'admin',
-          nickname: 'Bowen',
-        },
-      }),
-    } as Response));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          success: true,
+          message: 'Success',
+          data: {
+            token: 'jwt-token',
+            username: 'admin',
+            nickname: 'Bowen',
+          },
+        }),
+      } as Response),
+    );
 
     render(
       <MemoryRouter initialEntries={['/admin/login']}>
@@ -44,5 +47,30 @@ describe('AdminLogin page', () => {
     });
 
     expect(localStorage.getItem('blog_admin_token')).toBe('jwt-token');
+  });
+
+  it('starts with empty credentials and toggles password visibility', () => {
+    render(
+      <MemoryRouter initialEntries={['/admin/login']}>
+        <Routes>
+          <Route path="/admin/login" element={<AdminLogin />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    const usernameInput = screen.getByLabelText('用户名') as HTMLInputElement;
+    const passwordInput = screen.getByLabelText('密码') as HTMLInputElement;
+    const toggleButton = screen.getByRole('button', { name: '显示密码' });
+
+    expect(usernameInput.value).toBe('');
+    expect(passwordInput.value).toBe('');
+    expect(passwordInput.type).toBe('password');
+
+    fireEvent.change(passwordInput, { target: { value: 'wrong-password' } });
+    fireEvent.click(toggleButton);
+
+    expect(passwordInput.type).toBe('text');
+    expect(passwordInput.value).toBe('wrong-password');
+    expect(screen.getByRole('button', { name: '隐藏密码' })).toBeInTheDocument();
   });
 });
