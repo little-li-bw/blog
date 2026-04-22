@@ -72,6 +72,26 @@ blog/
 └─ README.md
 ```
 
+## 架构图
+
+### 1. 部署架构图
+
+展示系统部署在腾讯云 Linux 服务器上的整体拓扑，包括 Docker Compose 编排、Nginx 转发、Spring Boot API、MySQL 数据库以及 uploads 文件目录。
+
+![个人博客系统部署架构图](docs/images/deployment-architecture.png)
+
+### 2. 分层架构图
+
+展示系统从用户访问层、网关代理层、前端层、后端层、数据层到文件存储层的完整分层结构，以及后台 JWT 认证链路。
+
+![个人博客系统分层架构图](docs/images/layered-architecture.png)
+
+### 3. 后端模块架构图
+
+展示 Spring Boot 后端的模块划分与调用关系，重点说明 Controller、Service、Mapper、Database 的分层结构，以及 security、config、common、upload 等模块职责。
+
+![Spring Boot 博客系统后端模块架构图](docs/images/backend-module-architecture.png)
+
 ## 本地开发
 
 ### 环境要求
