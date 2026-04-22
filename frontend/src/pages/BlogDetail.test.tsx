@@ -9,37 +9,40 @@ describe('BlogDetail page', () => {
   });
 
   it('renders post detail from api', async () => {
-    vi.stubGlobal('fetch', vi.fn((input: RequestInfo | URL, init?: RequestInit) => {
-      const url = String(input);
-      if (init?.method === 'POST' && url.endsWith('/api/posts/1/views')) {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn((input: RequestInfo | URL, init?: RequestInit) => {
+        const url = String(input);
+        if (init?.method === 'POST' && url.endsWith('/api/posts/1/views')) {
+          return Promise.resolve({
+            ok: true,
+            json: async () => ({ success: true, message: 'Success', data: 13 }),
+          } as Response);
+        }
+
         return Promise.resolve({
           ok: true,
-          json: async () => ({ success: true, message: 'Success', data: 13 }),
+          json: async () => ({
+            success: true,
+            message: 'Success',
+            data: {
+              id: 1,
+              title: 'Spring Boot Notes',
+              summary: 'Summary',
+              contentHtml: '<h1>Title</h1><p>Body</p>',
+              status: 'PUBLISHED',
+              categoryId: 1,
+              categoryName: 'Java',
+              tags: ['Spring Boot'],
+              viewCount: 12,
+              publishTime: '2026-04-19T12:00:00',
+              previousPost: null,
+              nextPost: null,
+            },
+          }),
         } as Response);
-      }
-
-      return Promise.resolve({
-        ok: true,
-        json: async () => ({
-          success: true,
-          message: 'Success',
-          data: {
-            id: 1,
-            title: 'Spring Boot Notes',
-            summary: 'Summary',
-            contentHtml: '<h1>Title</h1><p>Body</p>',
-            status: 'PUBLISHED',
-            categoryId: 1,
-            categoryName: 'Java',
-            tags: ['Spring Boot'],
-            viewCount: 12,
-            publishTime: '2026-04-19T12:00:00',
-            previousPost: null,
-            nextPost: null,
-          },
-        }),
-      } as Response);
-    }));
+      }),
+    );
 
     render(
       <MemoryRouter initialEntries={['/blog/1']}>
@@ -56,10 +59,12 @@ describe('BlogDetail page', () => {
     expect(screen.getByText('Body')).toBeInTheDocument();
 
     const article = screen.getByRole('article');
-    expect(article.className).toContain('lg:col-span-9');
+    expect(article.className).toContain('max-w-5xl');
+    expect(article.className).toContain('mx-auto');
 
-    const tocHeading = screen.getByText('/ 目录导航');
-    const tocPanel = tocHeading.closest('div');
-    expect(tocPanel?.className).toContain('max-w-xs');
+    const tocHeading = screen.getByRole('heading', { name: /目录导航/ });
+    const aside = tocHeading.closest('aside');
+    expect(aside?.className).toContain('lg:absolute');
+    expect(aside?.className).toContain('lg:right-0');
   });
 });

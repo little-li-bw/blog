@@ -99,16 +99,16 @@ export default function BlogDetail() {
   };
 
   if (loading) {
-    return <div className="max-w-7xl mx-auto px-6 py-32 text-center text-slate-500">正在加载文章...</div>;
+    return <div className="mx-auto max-w-7xl px-6 py-32 text-center text-slate-500">正在加载文章...</div>;
   }
 
   if (error || !post) {
     return (
-      <div className="max-w-7xl mx-auto px-6 py-32 text-center space-y-8">
-        <h2 className="text-4xl font-black text-slate-900 uppercase tracking-tighter italic">404 - 文章不存在</h2>
+      <div className="mx-auto max-w-7xl space-y-8 px-6 py-32 text-center">
+        <h2 className="text-4xl font-black uppercase tracking-tighter text-slate-900 italic">404 - 文章不存在</h2>
         <Link
           to="/"
-          className="px-8 py-3 bg-gradient-to-r from-slate-800 to-slate-900 text-white font-black uppercase text-xs tracking-widest inline-block"
+          className="inline-block bg-gradient-to-r from-slate-800 to-slate-900 px-8 py-3 text-xs font-black uppercase tracking-widest text-white"
         >
           返回首页
         </Link>
@@ -117,128 +117,132 @@ export default function BlogDetail() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-10 xl:gap-12 py-12">
-      <article className="lg:col-span-9 space-y-16 min-w-0">
-        <div className="space-y-10 pb-12 border-b-2 border-slate-100">
-          <button
-            onClick={() => navigate(-1)}
-            className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-slate-900 transition-colors group"
-          >
-            <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-            返回列表
-          </button>
-
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-7xl font-black text-slate-900 tracking-tighter leading-[0.9]"
-          >
-            {post.title}
-          </motion.h1>
-
-          <div className="flex flex-wrap items-center gap-8 text-[10px] font-black uppercase tracking-widest text-slate-400">
-            <span className="flex items-center gap-2 px-3 py-1 bg-slate-50 text-slate-900 border border-slate-200">
-              <Calendar className="w-4 h-4" />
-              {formatDate(post.publishTime)}
-            </span>
-            <span className="flex items-center gap-2">
-              <Tag className="w-4 h-4" />
-              {post.categoryName}
-            </span>
-            <span className="flex items-center gap-2">
-              <Eye className="w-4 h-4" />
-              {viewCount} 次阅读
-            </span>
-          </div>
-
-          <div className="flex flex-wrap gap-2">
-            {post.tags.map((tag) => (
-              <span key={tag} className="px-2 py-1 bg-slate-100 text-[10px] font-bold text-slate-600 rounded-md">
-                {tag}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        <div
-          className="prose prose-slate prose-lg max-w-none prose-headings:text-slate-900 prose-headings:font-black prose-p:text-slate-600 prose-p:leading-[1.8] prose-code:text-slate-900 prose-code:bg-slate-100 prose-code:px-2 prose-code:py-0.5 prose-code:rounded-none prose-pre:bg-slate-900 prose-pre:text-white"
-          dangerouslySetInnerHTML={{ __html: content.html }}
-        />
-
-        <div className="pt-20 border-t-2 border-slate-100 grid grid-cols-1 md:grid-cols-2 gap-8">
-          {post.previousPost ? (
-            <Link
-              to={`/blog/${post.previousPost.id}`}
-              className="p-8 border-2 border-slate-800 hover:bg-slate-800 hover:text-white transition-all group flex flex-col items-start gap-4"
-            >
-              <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-white/50 transition-colors">
-                <ChevronLeft className="w-4 h-4" />
-                上一篇
-              </div>
-              <span className="text-xl font-black tracking-tighter line-clamp-1">{post.previousPost.title}</span>
-            </Link>
-          ) : (
-            <div />
-          )}
-
-          {post.nextPost ? (
-            <Link
-              to={`/blog/${post.nextPost.id}`}
-              className="p-8 border-2 border-slate-800 hover:bg-slate-800 hover:text-white transition-all group flex flex-col items-end gap-4 text-right"
-            >
-              <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-white/50 transition-colors">
-                下一篇
-                <ChevronLeft className="w-4 h-4 rotate-180" />
-              </div>
-              <span className="text-xl font-black tracking-tighter line-clamp-1">{post.nextPost.title}</span>
-            </Link>
-          ) : (
-            <div />
-          )}
-        </div>
-      </article>
-
-      <aside className="lg:col-span-3 lg:justify-self-end space-y-12">
-        <div className="sticky top-32 space-y-12">
-          <div className="bg-white border-l-[10px] border-slate-800 p-8 xl:p-9 space-y-8 w-full max-w-xs ml-auto">
-            <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.2em] flex items-center gap-3 italic">
-              / 目录导航
-            </h3>
-            <ul className="space-y-6">
-              {content.toc.map((item, index) => (
-                <li key={item.id}>
-                  <a
-                    href={`#${item.id}`}
-                    className={cn(
-                      'text-xs font-black uppercase tracking-widest transition-all block',
-                      index === 0
-                        ? 'text-slate-900 translate-x-4 border-l-4 border-slate-800 pl-4'
-                        : 'text-slate-400 hover:text-slate-900 hover:pl-4',
-                    )}
-                  >
-                    {item.text}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="bg-gradient-to-br from-slate-800 to-slate-900 p-10 text-white space-y-8 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-4 text-white/5 font-black text-7xl select-none pointer-events-none group-hover:scale-110 transition-transform duration-700">
-              博客
-            </div>
-            <h3 className="text-xl font-black tracking-tighter border-b border-white/10 pb-4">复制文章标题</h3>
-            <p className="text-slate-400 text-sm leading-relaxed font-medium">可以先把文章标题复制出去，方便你整理笔记或发给别人。</p>
+    <div className="mx-auto max-w-[1760px] px-6 py-12 xl:px-8 2xl:px-10">
+      <div className="relative">
+        <article className="mx-auto max-w-5xl min-w-0 space-y-16" role="article">
+          <div className="space-y-10 border-b-2 border-slate-100 pb-12">
             <button
-              onClick={handleCopy}
-              className="w-full flex items-center justify-center gap-3 py-4 bg-white text-slate-900 font-black uppercase text-xs tracking-widest hover:bg-slate-200 transition-all"
+              onClick={() => navigate(-1)}
+              className="group inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 transition-colors hover:text-slate-900"
             >
-              {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-              {copied ? '已复制' : '复制标题'}
+              <ChevronLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+              返回列表
             </button>
+
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-5xl font-black leading-[0.9] tracking-tighter text-slate-900 md:text-7xl"
+            >
+              {post.title}
+            </motion.h1>
+
+            <div className="flex flex-wrap items-center gap-8 text-[10px] font-black uppercase tracking-widest text-slate-400">
+              <span className="flex items-center gap-2 border border-slate-200 bg-slate-50 px-3 py-1 text-slate-900">
+                <Calendar className="h-4 w-4" />
+                {formatDate(post.publishTime)}
+              </span>
+              <span className="flex items-center gap-2">
+                <Tag className="h-4 w-4" />
+                {post.categoryName}
+              </span>
+              <span className="flex items-center gap-2">
+                <Eye className="h-4 w-4" />
+                {viewCount} 次阅读
+              </span>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {post.tags.map((tag) => (
+                <span key={tag} className="rounded-md bg-slate-100 px-2 py-1 text-[10px] font-bold text-slate-600">
+                  {tag}
+                </span>
+              ))}
+            </div>
           </div>
-        </div>
-      </aside>
+
+          <div
+            className="prose prose-slate prose-lg max-w-none prose-headings:font-black prose-headings:text-slate-900 prose-p:leading-[1.8] prose-p:text-slate-600 prose-code:rounded-none prose-code:bg-slate-100 prose-code:px-2 prose-code:py-0.5 prose-code:text-slate-900 prose-pre:bg-slate-900 prose-pre:text-white"
+            dangerouslySetInnerHTML={{ __html: content.html }}
+          />
+
+          <div className="grid grid-cols-1 gap-8 border-t-2 border-slate-100 pt-20 md:grid-cols-2">
+            {post.previousPost ? (
+              <Link
+                to={`/blog/${post.previousPost.id}`}
+                className="group flex flex-col items-start gap-4 border-2 border-slate-800 p-8 transition-all hover:bg-slate-800 hover:text-white"
+              >
+                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 transition-colors group-hover:text-white/50">
+                  <ChevronLeft className="h-4 w-4" />
+                  上一篇
+                </div>
+                <span className="line-clamp-1 text-xl font-black tracking-tighter">{post.previousPost.title}</span>
+              </Link>
+            ) : (
+              <div />
+            )}
+
+            {post.nextPost ? (
+              <Link
+                to={`/blog/${post.nextPost.id}`}
+                className="group flex flex-col items-end gap-4 border-2 border-slate-800 p-8 text-right transition-all hover:bg-slate-800 hover:text-white"
+              >
+                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 transition-colors group-hover:text-white/50">
+                  下一篇
+                  <ChevronLeft className="h-4 w-4 rotate-180" />
+                </div>
+                <span className="line-clamp-1 text-xl font-black tracking-tighter">{post.nextPost.title}</span>
+              </Link>
+            ) : (
+              <div />
+            )}
+          </div>
+        </article>
+
+        <aside className="mt-16 space-y-12 lg:mt-0 lg:absolute lg:right-0 lg:top-0 lg:w-72 xl:w-80">
+          <div className="space-y-12 lg:sticky lg:top-32">
+            <div className="space-y-8 border-l-[10px] border-slate-800 bg-white p-7 xl:p-8">
+              <h3 className="flex items-center gap-3 text-xs font-black uppercase tracking-[0.2em] text-slate-900 italic">
+                / 目录导航
+              </h3>
+              <ul className="space-y-6">
+                {content.toc.map((item, index) => (
+                  <li key={item.id}>
+                    <a
+                      href={`#${item.id}`}
+                      className={cn(
+                        'block text-xs font-black uppercase tracking-widest transition-all',
+                        index === 0
+                          ? 'translate-x-4 border-l-4 border-slate-800 pl-4 text-slate-900'
+                          : 'text-slate-400 hover:pl-4 hover:text-slate-900',
+                      )}
+                    >
+                      {item.text}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="group relative overflow-hidden space-y-8 bg-gradient-to-br from-slate-800 to-slate-900 p-10 text-white">
+              <div className="pointer-events-none absolute right-0 top-0 select-none p-4 text-7xl font-black text-white/5 transition-transform duration-700 group-hover:scale-110">
+                博客
+              </div>
+              <h3 className="border-b border-white/10 pb-4 text-xl font-black tracking-tighter">复制文章标题</h3>
+              <p className="text-sm font-medium leading-relaxed text-slate-400">
+                可以先把文章标题复制出去，方便你整理笔记或发给别人。
+              </p>
+              <button
+                onClick={handleCopy}
+                className="flex w-full items-center justify-center gap-3 bg-white py-4 text-xs font-black uppercase tracking-widest text-slate-900 transition-all hover:bg-slate-200"
+              >
+                {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                {copied ? '已复制' : '复制标题'}
+              </button>
+            </div>
+          </div>
+        </aside>
+      </div>
     </div>
   );
 }
