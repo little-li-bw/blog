@@ -12,10 +12,43 @@
   }
 }
 
-/* Custom Prose overrides */
-.prose pre {
-  margin: 0 !important;
+/* Custom prose overrides */
+.blog-markdown pre[data-code-block='true'] {
+  margin: 1.75em 0 !important;
+  overflow-x: auto;
+  border-radius: 0.75rem;
+  background: #0f172a !important;
+  color: #f8fafc !important;
+  padding: 1rem 1.25rem !important;
+}
+
+.blog-markdown pre[data-code-block='true'] code[data-inline-code='false'] {
+  display: block;
   background: transparent !important;
+  color: inherit !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  white-space: pre;
+}
+
+.blog-markdown pre[data-code-block='true'] code[data-inline-code='false'] [data-token='comment'] {
+  color: #94a3b8;
+}
+
+.blog-markdown pre[data-code-block='true'] code[data-inline-code='false'] [data-token='keyword'] {
+  color: #7dd3fc;
+}
+
+.blog-markdown pre[data-code-block='true'] code[data-inline-code='false'] [data-token='string'] {
+  color: #fca5a5;
+}
+
+.blog-markdown pre[data-code-block='true'] code[data-inline-code='false'] [data-token='annotation'] {
+  color: #f9a8d4;
+}
+
+.blog-markdown pre[data-code-block='true'] code[data-inline-code='false'] [data-token='type'] {
+  color: #86efac;
 }
 
 .scrollbar-thin::-webkit-scrollbar {

@@ -12,6 +12,166 @@ interface TocItem {
   text: string;
 }
 
+const JAVA_KEYWORDS = new Set([
+  'abstract',
+  'assert',
+  'boolean',
+  'break',
+  'byte',
+  'case',
+  'catch',
+  'char',
+  'class',
+  'const',
+  'continue',
+  'default',
+  'do',
+  'double',
+  'else',
+  'enum',
+  'extends',
+  'final',
+  'finally',
+  'float',
+  'for',
+  'goto',
+  'if',
+  'implements',
+  'import',
+  'instanceof',
+  'int',
+  'interface',
+  'long',
+  'native',
+  'new',
+  'package',
+  'private',
+  'protected',
+  'public',
+  'return',
+  'short',
+  'static',
+  'strictfp',
+  'super',
+  'switch',
+  'synchronized',
+  'this',
+  'throw',
+  'throws',
+  'transient',
+  'try',
+  'void',
+  'volatile',
+  'while',
+]);
+
+function escapeHtml(value: string): string {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
+function wrapToken(type: 'annotation' | 'comment' | 'keyword' | 'string' | 'type', value: string): string {
+  return `<span data-token="${type}">${escapeHtml(value)}</span>`;
+}
+
+function isIdentifierStart(char: string): boolean {
+  return /[A-Za-z_$]/.test(char);
+}
+
+function isIdentifierPart(char: string): boolean {
+  return /[A-Za-z0-9_$]/.test(char);
+}
+
+function consumeQuotedLiteral(source: string, start: number, quote: '"' | "'"): number {
+  let index = start + 1;
+  while (index < source.length) {
+    const current = source[index];
+    if (current === '\\') {
+      index += 2;
+      continue;
+    }
+    index += 1;
+    if (current === quote) {
+      break;
+    }
+  }
+  return index;
+}
+
+function highlightJavaCode(source: string): string {
+  let html = '';
+  let index = 0;
+
+  while (index < source.length) {
+    const current = source[index];
+    const next = source[index + 1];
+
+    if (current === '/' && next === '/') {
+      let end = index + 2;
+      while (end < source.length && source[end] !== '\n') {
+        end += 1;
+      }
+      html += wrapToken('comment', source.slice(index, end));
+      index = end;
+      continue;
+    }
+
+    if (current === '/' && next === '*') {
+      let end = index + 2;
+      while (end < source.length && !(source[end] === '*' && source[end + 1] === '/')) {
+        end += 1;
+      }
+      end = Math.min(end + 2, source.length);
+      html += wrapToken('comment', source.slice(index, end));
+      index = end;
+      continue;
+    }
+
+    if (current === '"' || current === "'") {
+      const end = consumeQuotedLiteral(source, index, current);
+      html += wrapToken('string', source.slice(index, end));
+      index = end;
+      continue;
+    }
+
+    if (current === '@' && isIdentifierStart(next ?? '')) {
+      let end = index + 1;
+      while (end < source.length && (isIdentifierPart(source[end]) || source[end] === '.')) {
+        end += 1;
+      }
+      html += wrapToken('annotation', source.slice(index, end));
+      index = end;
+      continue;
+    }
+
+    if (isIdentifierStart(current)) {
+      let end = index + 1;
+      while (end < source.length && isIdentifierPart(source[end])) {
+        end += 1;
+      }
+      const token = source.slice(index, end);
+      if (JAVA_KEYWORDS.has(token)) {
+        html += wrapToken('keyword', token);
+      } else if (/^[A-Z]/.test(token)) {
+        html += wrapToken('type', token);
+      } else {
+        html += escapeHtml(token);
+      }
+      index = end;
+      continue;
+    }
+
+    html += escapeHtml(current);
+    index += 1;
+  }
+
+  return html;
+}
+
 function buildContent(contentHtml: string): { html: string; toc: TocItem[] } {
   const document = new DOMParser().parseFromString(contentHtml, 'text/html');
   const headings = Array.from(document.querySelectorAll('h1, h2, h3'));
@@ -20,6 +180,25 @@ function buildContent(contentHtml: string): { html: string; toc: TocItem[] } {
     const id = `heading-${index + 1}`;
     heading.setAttribute('id', id);
     return { id, text };
+  });
+
+  const codeBlocks = Array.from(document.querySelectorAll('pre'));
+  codeBlocks.forEach((pre) => {
+    pre.setAttribute('data-code-block', 'true');
+    const blockCode = pre.querySelector('code');
+    if (blockCode) {
+      blockCode.setAttribute('data-inline-code', 'false');
+      if (blockCode.className.split(/\s+/).includes('language-java')) {
+        blockCode.innerHTML = highlightJavaCode(blockCode.textContent ?? '');
+      }
+    }
+  });
+
+  const inlineCodes = Array.from(document.querySelectorAll('code'));
+  inlineCodes.forEach((code) => {
+    if (!code.closest('pre')) {
+      code.setAttribute('data-inline-code', 'true');
+    }
   });
 
   return {
@@ -162,7 +341,7 @@ export default function BlogDetail() {
           </div>
 
           <div
-            className="prose prose-slate prose-lg max-w-none prose-headings:font-black prose-headings:text-slate-900 prose-p:leading-[1.8] prose-p:text-slate-600 prose-code:rounded-none prose-code:bg-slate-100 prose-code:px-2 prose-code:py-0.5 prose-code:text-slate-900 prose-pre:bg-slate-900 prose-pre:text-white"
+            className="blog-markdown prose prose-slate prose-lg max-w-none prose-headings:font-black prose-headings:text-slate-900 prose-p:leading-[1.8] prose-p:text-slate-600 prose-code:rounded-none prose-code:bg-slate-100 prose-code:px-2 prose-code:py-0.5 prose-code:text-slate-900"
             dangerouslySetInnerHTML={{ __html: content.html }}
           />
 
